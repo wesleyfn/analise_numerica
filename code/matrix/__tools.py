@@ -18,13 +18,13 @@ def determinant(matrix) -> int | None:
         return np.linalg.det(matrix)
 
 
-def read_system(file_name: str) -> tuple[np.ndarray, np.ndarray, float]:
+def read_system(file_name: str) -> tuple[np.ndarray, np.ndarray, float, float]:
     path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
     with open(path_file, 'r') as f:
         system = [eq.strip() for eq in f.readlines()]
 
     exprs, consts = [], []
-    for i in range(len(system)-1):
+    for i in range(len(system)-2):
         try:
             exprs.append(sp.parse_expr(system[i].strip().split('=')[0]))
             consts.append(sp.parse_expr(system[i].strip().split('=')[1]))
@@ -35,14 +35,18 @@ def read_system(file_name: str) -> tuple[np.ndarray, np.ndarray, float]:
             print('> ERROR: Sintax incorreta no arquivo de entrada.')
             exit(-1)
     
-    tol = float(system.pop())
+    MAX_ITER = int(system.pop())
+    TOL = float(system.pop())
+    
     vector_x = list(set().union(*[eq.free_symbols for eq in exprs]))
     vector_x = sorted(vector_x, key=lambda symbol: str(symbol))
 
     matrix_A = np.array([[eq.coeff(var) for var in vector_x] for eq in exprs], dtype=np.float64)
     vector_b = np.array(consts, dtype=np.float64)
 
-    return matrix_A, vector_b, tol
+    print(matrix_A)
+    print(vector_b)
+    return matrix_A, vector_b, TOL, MAX_ITER
 
 def save_results(file_name: str, results: list):
     with open(file_name, 'a+') as f:

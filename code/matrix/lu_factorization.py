@@ -3,19 +3,21 @@ from __tools import *
 
 def lu_factorization(matrix_A):
     if determinant(matrix_A) == None:
-        print('> LU: O sistema não tem solução ou possui multiplas soluções.')
-        exit(-1)
+        return None
     
     n = len(matrix_A)
     matrix_L = np.eye(n)
     matrix_U = np.zeros((n,n))
     
     for k in range(n):
+        max_idx = k + np.argmax(np.abs(matrix_A[k:, k]))
+        matrix_A[[k, max_idx]] = matrix_A[[max_idx, k]]
         matrix_U[k, k] = matrix_A[k, k] - np.dot(matrix_L[k, :k], matrix_U[:k, k])
+        
         for i in range(k+1, n):
             matrix_L[i, k] = (matrix_A[i, k] - np.dot(matrix_L[i, :k], matrix_U[:k, k])) / matrix_U[k, k]
         for j in range(k+1, n):
-            matrix_U[k, j] = matrix_A[k, j] - np.dot(matrix_L[k, :k], matrix_U[:k, j])      
+            matrix_U[k, j] = matrix_A[k, j] - np.dot(matrix_L[k, :k], matrix_U[:k, j])
     
     return matrix_L, matrix_U
 

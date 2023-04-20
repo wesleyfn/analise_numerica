@@ -1,10 +1,10 @@
 from __tools import *
 
+
 def gaussian_elimination(matrix_A, vector_b):
 
     if determinant(matrix_A) == None:
-        print('> ERROR: O sistema não tem solução ou possui multiplas soluções.')
-        exit(-1)
+        return None
 
     n = len(matrix_A)
     vector_x = np.zeros(n)
