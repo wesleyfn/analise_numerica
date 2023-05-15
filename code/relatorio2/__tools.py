@@ -1,41 +1,40 @@
-import os
 import numpy as np
+import sympy as sp
 
 
-def read_intervals(file_name: str) -> tuple:
-    path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
-    with open(path_file, 'r') as f:
-        try:
-            n = int(f.readline().strip())
-            x_values, y_values = [], []
-            for line in f.readlines():
-                x_values += line.strip().split(',')[:1]
-                y_values += line.strip().split(',')[1:]
-                
-            x_values = list(map(lambda x: np.float64(x), x_values))
-            y_values = list(map(lambda x: np.float64(x), y_values))
-            
-        except ValueError and TypeError:
-            return None
-
-    return x_values, y_values, n
-
-
-def read_file_expr(file_name: str) -> tuple:
-    path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
-    with open(path_file, 'r') as f:
-        try:
-            expr = f.readline().strip()
-            a, b = f.readline().strip().split(',')
-            n = f.readline().strip()
-
-        except ValueError and TypeError:
-            return None
+def lu_factorization(matrix_A):
+    if sp.det(matrix_A) == 0:
+        raise Exception('> Derivada resultou em 0')
     
-    return expr, float(a), float(b), int(n)
-            
+    n = len(matrix_A)
+    matrix_L = np.eye(n)
+    matrix_U = np.zeros((n,n))
+    
+    for k in range(n):
+        max_idx = k + np.argmax(np.abs(matrix_A[k:, k]))
+        matrix_A[[k, max_idx]] = matrix_A[[max_idx, k]]
+        matrix_U[k, k] = matrix_A[k, k] - np.dot(matrix_L[k, :k], matrix_U[:k, k])
+        
+        for i in range(k+1, n):
+            matrix_L[i, k] = (matrix_A[i, k] - np.dot(matrix_L[i, :k], matrix_U[:k, k])) / matrix_U[k, k]
+        for j in range(k+1, n):
+            matrix_U[k, j] = matrix_A[k, j] - np.dot(matrix_L[k, :k], matrix_U[:k, j])
+    
+    return matrix_L, matrix_U
 
-def save_results(file_name: str, result: str):
-    with open(file_name, 'a+') as f:
-        f.truncate(0)
-        f.write(result)
+
+def lu_solve(matrix_A, vector_b):
+    matrix_L, matrix_U = lu_factorization(matrix_A)
+    
+    n = len(matrix_A)
+    y = x = np.zeros(n)
+
+    for i in range(n):
+        y[i] = vector_b[i] - np.dot(matrix_L[i, :i], y[:i])
+
+    for i in range(n-1, -1, -1):
+        x[i] = (y[i] - np.dot(matrix_U[i, i+1:], x[i+1:])) / matrix_U[i, i]
+
+    return x
+
+

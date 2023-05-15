@@ -44,8 +44,6 @@ def read_system(file_name: str) -> tuple[np.ndarray, np.ndarray, float, float]:
     matrix_A = np.array([[eq.coeff(var) for var in vector_x] for eq in exprs], dtype=np.float64)
     vector_b = np.array(consts, dtype=np.float64)
 
-    print(matrix_A)
-    print(vector_b)
     return matrix_A, vector_b, TOL, MAX_ITER
 
 def save_results(file_name: str, results: list):

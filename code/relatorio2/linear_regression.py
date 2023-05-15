@@ -24,7 +24,7 @@ def linear_regression(x, y) -> tuple[np.float64]:
 
 def run():
     FILE_NAME = 'output.txt'
-    x_values, y_values, _ = read_intervals('input.txt')
+    x_values, y_values, _ = read_file('input.txt')
     coeffs = linear_regression(x_values, y_values)
     
     save_results(FILE_NAME, f'linear_regression: {coeffs}')

@@ -1,46 +1,38 @@
 from __tools import *
+import sympy as sp
 
-def lagrange_interpolation(x, y, x_interp):
+
+def lagrange_interpolation(x: list, y: list) -> list:
     # Converte para numpy array se necessário
-    x = np.array(x)
     y = np.array(y)
-    x_interp = np.array(x_interp)
+    x = np.array(x)
 
-    # Verifica se x e y têm o mesmo tamanho
-    if x.size != y.size:
-        raise ValueError("x e y devem ter o mesmo tamanho.")
-
-    # Verifica se x_interp tem tamanho maior que zero
-    if x_interp.size == 0:
-        raise ValueError("x_interp deve ter tamanho maior que zero.")
-
-    # Calcula o número de pontos conhecidos
-    n = x.size
-
-    # Inicializa a matriz que armazenará os valores dos polinômios de Lagrange
-    L = np.zeros((n, x_interp.size))
-
-    # Calcula os polinômios de Lagrange
+    n = len(x)
+    polynomials = []
+    x_sp = sp.symbols('x')
+    
     for i in range(n):
-        # Calcula o denominador da fórmula de Lagrange
+        # Calcula o polinômio de Lagrange correspondente ao i-ésimo ponto
+        numerator = np.prod(x_sp - x[np.arange(n) != i])
         denominator = np.prod(x[i] - x[np.arange(n) != i])
+        
+        # Multiplica o polinômio de Lagrange pelo valor y correspondente 
+                     
+        polynomials.append((numerator / denominator) * y[i])
+        
+    print(polynomials) 
+    # Soma os termos do polinômio interpolado
+    interpolator = sum(polynomials)
 
-        # Calcula o numerador da fórmula de Lagrange
-        numerator = x_interp - x[np.arange(n) != i]
-        numerator = np.prod(numerator, axis=0)
+    # Obtém os coeficientes do polinômio interpolado
+    coeffs = sp.Poly(interpolator).all_coeffs()
 
-        # Armazena o resultado na matriz L
-        L[i, :] = numerator / denominator
-
-    # Calcula os valores interpolados correspondentes a x_interp
-    y_interp = np.dot(y, L)
-
-    return y_interp
+    return coeffs
 
 def run():
-    x, y = read_intervals('input.txt')
-    a0, a1, a2 = lagrange_interpolation(x, y, 2)
-    save_results('output.txt', f'poly_regression: P(x)={a0:.7} + {a1:.7}x + {a2:.7}x²')
+    x, y, _ = read_file('input.txt')
+    coeffs = lagrange_interpolation(x, y)
+    save_results('output.txt', f'lagrange_interpolation: {coeffs}')
 
 # Chama a função principal
 if __name__ == '__main__':
