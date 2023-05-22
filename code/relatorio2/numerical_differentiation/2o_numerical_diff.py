@@ -1,7 +1,14 @@
 import os
 import sympy as sp
 
+"""
+    2o_input:
+        expr = 2*x**2 - 5*x
+        x = 2.0
+        h = 1e-4
+"""
 
+# Funções para entrada e saída de dados
 def read_file(file_name: str):
     path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
     with open(path_file, 'r') as f:
@@ -13,7 +20,7 @@ def read_file(file_name: str):
             # Lê a terceira linha do arquivo e converte para float
             h = float(f.readline())
             
-        except ValueError or TypeError:
+        except (ValueError, TypeError):
             return None, 0.0, 0.0
 
     return expr, x, h
@@ -25,21 +32,18 @@ def save_results(file_name: str, result: str):
 
 
 def numerical_diff_2o(expr, x, h):
-    def f(x):
-        try:
-            return sp.N(expr.subs({'x': x}))
-        except AttributeError:
-            return expr
+    f = lambda x: sp.N(expr.subs({'x': x})) if hasattr(expr, 'subs') else expr
     
     # Retorna a aproximação da derivada numérica de segunda ordem
     return sp.N(((f(x + h) - f(x))/h - (f(x) - f(x - h))/h) / h)
 
 def run():
-    FILE_NAME = 'input.txt'
+    FILE_NAME = '2o_input.txt'
     expr, x, h = read_file(FILE_NAME)
     
-    coeffs = numerical_diff_2o(expr, x, h)
-    save_results('output.txt', f'numerical_derivative: {coeffs}')
+    if expr is not None:
+        diff = numerical_diff_2o(expr, x, h)
+        save_results('output.txt', f'numerical_derivative: {diff}')
 
 # Chama a função principal
 if __name__ == '__main__':

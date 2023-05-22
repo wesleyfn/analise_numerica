@@ -1,1 +1,0 @@
-numerical_derivative: -418.000000000000

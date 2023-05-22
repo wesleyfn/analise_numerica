@@ -1,7 +1,32 @@
 import os
 import numpy as np
+import sympy as sp
 
+# Funções para entrada e saída de dados
+def read_file(file_name: str):
+    path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
+    with open(path_file, 'r') as f:
+        try:
+            n = int(f.readline().strip())
+            x_values, y_values = [], []
+            for line in f.readlines():
+                x_values += line.strip().split(',')[:1]
+                y_values += line.strip().split(',')[1:]
+                
+            x_values = list(map(lambda x: np.float64(eval(x)), x_values))
+            y_values = list(map(lambda x: np.float64(eval(x)), y_values))
+            
+        except (ValueError, TypeError):
+            return None, None, 0
 
+    return x_values, y_values, n
+            
+def save_results(file_name: str, result: str):
+    with open(file_name, 'a+') as f:
+        f.truncate(0)
+        f.write(result)
+
+# Funções auxiliares para a aproximação
 def lu_factorization(matrix_A):
     if np.linalg.det(matrix_A) == 0:
         raise Exception('> Derivada resultou em 0')
@@ -36,31 +61,7 @@ def lu_solve(matrix_A, vector_b):
     for i in range(n-1, -1, -1):
         x[i] = (y[i] - np.dot(matrix_U[i, i+1:], x[i+1:])) / matrix_U[i, i]
         
-    return x
-
-
-def read_file(file_name: str):
-    path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
-    with open(path_file, 'r') as f:
-        try:
-            n = int(f.readline().strip())
-            x_values, y_values = [], []
-            for line in f.readlines():
-                x_values += line.strip().split(',')[:1]
-                y_values += line.strip().split(',')[1:]
-                
-            x_values = list(map(lambda x: np.float64(eval(x)), x_values))
-            y_values = list(map(lambda x: np.float64(eval(x)), y_values))
-            
-        except ValueError and TypeError:
-            return None, None, None
-
-    return x_values, y_values, n
-            
-def save_results(file_name: str, result: str):
-    with open(file_name, 'a+') as f:
-        f.truncate(0)
-        f.write(result)
+    return x[::-1]
 
 
 def polyfit_discrete(x, y, n):
@@ -83,15 +84,20 @@ def polyfit_discrete(x, y, n):
     
     # Resolve o sistema de equações lineares usando a fatorização LU
     coeffs = lu_solve(matrix_A, vector_b)
-    return coeffs
+    
+    # Cria um polinomio utilizando os coeficientes gerados anteriormente
+    poly = sp.Poly.from_list(coeffs, sp.symbols('x'))
+    
+    return poly.as_expr()
 
 
 def run():
-    FILE_NAME = 'output.txt'
-    x, y, n = read_file('input.txt')
+    FILE_NAME = 'discrete_input.txt'
+    list_x, list_y, n = read_file(FILE_NAME)
     
-    coeffs = polyfit_discrete(x, y, n)
-    save_results(FILE_NAME, f'polyfit_discrete: {coeffs}')
+    if list_x is not None:
+        poly = polyfit_discrete(list_x, list_y, n)
+        save_results('output.txt', f'polyfit_discrete: {poly}')
     
 # Chama a função principal
 if __name__ == '__main__':
