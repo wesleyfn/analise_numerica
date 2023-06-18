@@ -64,31 +64,46 @@ def lu_solve(matrix_A, vector_b):
     return x[::-1]
 
 
-def polyfit_discrete(x, y, n):
+def polyfit_discrete(list_x, list_y, degree):
     # Converte listas para arrays Numpy
-    x = np.array(x)
-    y = np.array(y)
+    list_x = np.array(list_x)
+    list_y = np.array(list_y)
+    
+    n = len(list_x)
     
     # Cria a matriz de Vandermonde
-    matrix_u = np.vander(x, n+1, increasing=True)
+    matrix_u = np.vander(list_x, degree+1, increasing=True)
 
     matrix_A = []
     # Calcula os produtos internos para preencher a matriz A
-    for i in range(n+1):
-        matrix_A.append(np.dot(matrix_u[:, i], matrix_u[:, range(n+1)]))
+    for i in range(degree+1):
+        matrix_A.append(np.dot(matrix_u[:, i], matrix_u[:, range(degree+1)]))
 
     matrix_A = np.asfarray(matrix_A, np.float64)
     
     # Calcula o produto interno para obter o vetor b
-    vector_b = np.asfarray(np.dot(y, matrix_u[:, range(n+1)]), np.float64)
+    vector_b = np.asfarray(np.dot(list_y, matrix_u[:, range(degree+1)]), np.float64)
     
     # Resolve o sistema de equações lineares usando a fatorização LU
     coeffs = lu_solve(matrix_A, vector_b)
     
-    # Cria um polinomio utilizando os coeficientes gerados anteriormente
-    poly = sp.Poly.from_list(coeffs, sp.symbols('x'))
+    # Calcula o coeficiente de determinação
+    y_mean = np.mean(list_y)
+    y_pred = np.polyval(coeffs, list_x)
+    s_tot = np.sum((list_y - y_mean) ** 2)
+    s_res = np.sum((list_y - y_pred) ** 2)
+    r2 = 1 - (s_res / s_tot)
     
-    return poly.as_expr()
+    # Calcula o desvio padrão (se houver mais de 2 pontos)
+    std_dev = np.sqrt(s_res / (n - degree - 1)) if n-degree-1 > 0 else 0
+    
+    # Calcula o erro padrão da estimativa (se houver mais de 2 pontos)
+    std_err = np.sqrt(s_res / (n - degree - 2)) if n-degree-2 > 0 else 0
+    
+    # Cria um polinomio utilizando os coeficientes gerados anteriormente
+    poly = sp.N(sp.Poly.from_list(coeffs, sp.symbols('x')).as_expr(), 7)
+    
+    return poly, round(std_dev, 3), round(std_err, 3), round(r2, 3)
 
 
 def run():

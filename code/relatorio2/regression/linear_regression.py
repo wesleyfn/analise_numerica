@@ -31,7 +31,7 @@ def linear_regression(list_x, list_y):
     list_x = np.array(list_x)
     list_y = np.array(list_y)
     
-    # Atribui o numero de valores em n
+    # Atribui o número de valores em n
     n = list_x.size
 
     # Cálculo dos coeficientes a1 e a0
@@ -39,16 +39,22 @@ def linear_regression(list_x, list_y):
     a1 /= (n * np.sum(list_x**2) - np.sum(list_x)**2)
     a0 = np.mean(list_y) - a1 * np.mean(list_x)
     
-    # Cálculo do coeficiente de determinacao
-    ss_tot = np.sum((list_y - np.mean(list_y)) ** 2)
-    ss_res = np.sum((list_y - (a0 + a1 * list_x)) ** 2)
-    r2 = 1 - (ss_res / ss_tot)
+    # Soma dos quadrados totais
+    s_tot = np.sum((list_y - np.mean(list_y)) ** 2)
+    # Soma dos quadrados dos resíduos
+    s_res = np.sum((list_y - (a0 + a1*list_x)) ** 2)
+
+    # Cálculo do desvio padrão
+    std_dev = np.sqrt(s_tot / (n - 1))
+    # Cálculo do erro padrão da estimativa
+    std_err = np.sqrt(s_res / (n - 2))
+    # Cálculo do coeficiente de determinação
+    r2 = 1 - (s_res / s_tot)
     
-    # Cria um polinomio utlizando os coedicientes a1 e a0
+    # Cria um polinômio utilizando os coeficientes a1 e a0
     poly = sp.N(sp.Poly([a1, a0], sp.symbols('x')).as_expr(), 7)
     
-    # Retorna o polinomio linear e os coeficientes de determinação e correlação respectivamente
-    return poly, round(r2, 7), round(np.sqrt(r2), 7)
+    return poly, round(std_dev, 3), round(std_err, 3), round(r2, 3)
 
 
 def run():
