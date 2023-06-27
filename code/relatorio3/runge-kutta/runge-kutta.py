@@ -11,18 +11,18 @@ def read_file(file_name: str):
             x0 = float(f.readline())
             y0 = float(f.readline())
             h = float(f.readline())
-            n = int(f.readline())
+            n_x = int(f.readline())
         except (ValueError, TypeError):
-            return None, 0.0, 0.0, 0.0, 0
+            return None, 0.0, 0.0, 0.0, 0, 0
 
-    return expr, x0, y0, h, n
+    return expr, x0, y0, h, n_x
             
 def save_results(file_name: str, result: str):
     with open(file_name, 'a+') as f:
         f.truncate(0)
         f.write(result)
         
-def euler_modified(expr, x0, y0, h, n_x):
+def runge_kutta_o4(expr, x0, y0, h, n_x):
     list_x = np.linspace(x0, x0 + n_x * h, n_x+1)
     list_y = np.zeros(n_x+1)
     list_y[0] = y0
@@ -32,8 +32,13 @@ def euler_modified(expr, x0, y0, h, n_x):
         k1 = f(list_x[i], 
                list_y[i])
         k2 = f(list_x[i] + h/2, 
-               list_y[i] + (h/2)*k1)
-        list_y[i+1] = list_y[i] + h * k2
+               list_y[i] + (h/2) * k1)
+        k3 = f(list_x[i] + h/2, 
+               list_y[i] + (h/2) * k2)
+        k4 = f(list_x[i] + h, 
+               list_y[i] + h * k3)
+
+        list_y[i+1] = list_y[i] + (h/6) * (k1 + 2*k2 + 2*k3 + k4)
 
     return list(list_x), list(list_y)
 
@@ -42,8 +47,8 @@ def run():
     expr, x0, y0, h, n = read_file(FILE_NAME)
     
     #if expr is not None:
-    list_x, list_y = euler_modified(expr, x0, y0, h, n)
-    save_results('output.txt', f'euler_modified: x={list_x}, y={list_y}')
+    list_x, list_y = runge_kutta_o4(expr, x0, y0, h, n)
+    save_results('output.txt', f'runge_kutta_o4: x={list_x}, y={list_y}')
 
 # Chama a função principal
 if __name__ == '__main__':

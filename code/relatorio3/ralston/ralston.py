@@ -29,9 +29,11 @@ def ralston_method(expr, x0, y0, h, n_x):
     
     f = lambda x, y: sp.N(expr.subs({'x': x, 'y': y})) if hasattr(expr, 'subs') else expr
     for i in range(n_x):
-        k1 = f(list_x[i], list_y[i])
-        k2 = f(list_x[i] + (3*h)/4, list_y[i] + (3*h*k1)/4)
-        list_y[i+1] = list_y[i] + h * ((k1/3)+ (2*k2)/3)
+        k1 = f(list_x[i], 
+               list_y[i])
+        k2 = f(list_x[i] + (3/4) * h, 
+               list_y[i] + (3/4) * h * k1)
+        list_y[i+1] = list_y[i] + (1/3) * h * (k1 + 2 * k2)
 
     return list(list_x), list(list_y)
 

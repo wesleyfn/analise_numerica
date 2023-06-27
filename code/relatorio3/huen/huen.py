@@ -32,8 +32,10 @@ def huen_method(expr, x0, y0, h, n_x, n_iterations):
     for i in range(n_x):
         y_temp = list_y[i]
         for _ in range(n_iterations):
-            k1 = f(list_x[i], y_temp)
-            k2 = f(list_x[i+1], list_y[i] + h*k1)
+            k1 = f(list_x[i], 
+                   y_temp)
+            k2 = f(list_x[i+1], 
+                   list_y[i] + h*k1)
             y_temp = list_y[i] + (h/2) * (k1+k2)
 
         list_y[i+1] = y_temp
