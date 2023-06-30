@@ -4,7 +4,7 @@ import sympy as sp
 
 # Funções para entrada e saída de dados
 def read_file(file_name: str):
-    path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
+    path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
             n = int(f.readline().strip())
@@ -21,8 +21,8 @@ def read_file(file_name: str):
 
     return x_values, y_values, n
             
-def save_results(file_name: str, result: str):
-    with open(file_name, 'a+') as f:
+    path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+    with open(path_file, 'w') as f:
         f.truncate(0)
         f.write(result)
 

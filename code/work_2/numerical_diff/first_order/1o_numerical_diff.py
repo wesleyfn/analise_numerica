@@ -1,16 +1,9 @@
 import os
 import sympy as sp
 
-"""
-    1o_input:
-        expr = 2*x**2 - 5*x
-        x = 2.0
-        h = 1e-4
-        method = forward
-"""
 
 def read_file(file_name: str):
-    path_file = os.path.abspath(os.path.join(os.getcwd(), file_name))
+    path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
             # Lê a primeira linha do arquivo e converte para expressão sympy
@@ -28,8 +21,8 @@ def read_file(file_name: str):
     return expr, x, h, method
             
 def save_results(file_name: str, result: str):
-    with open(file_name, 'a+') as f:
-        f.truncate(0)
+    path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+    with open(path_file, 'w') as f:
         f.write(result)
         
 
