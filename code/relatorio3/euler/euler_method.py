@@ -13,7 +13,7 @@ def read_file(file_name: str):
             h = float(f.readline())
             n_h = int(f.readline())
         except (ValueError, TypeError):
-            return None, 0.0, 0.0, 0.0, 0, 0
+            return None, 0.0, 0.0, 0.0, 0
 
     return expr, x0, y0, h, n_h
             
@@ -22,10 +22,10 @@ def save_results(file_name: str, result: str):
     with open(path_file, 'w') as f:
         f.write(result)
 
-    
-def runge_kutta_o4(expr, x0, y0, h, n_x):
-    list_x = np.linspace(x0, x0 + n_x * h, n_x+1)
-    list_y = np.zeros(n_x+1)
+
+def euler_method(expr, x0, y0, h, n_h):
+    list_x = np.linspace(x0, x0 + n_h * h, n_h+1)
+    list_y = np.zeros(n_h+1)
     list_y[0] = y0
     
     symbols = list(expr.free_symbols)
@@ -36,19 +36,10 @@ def runge_kutta_o4(expr, x0, y0, h, n_x):
             return sp.N(expr.subs([(symbols[0], x), (symbols[1], y)]))
         else:
             return expr
-        
-    for i in range(n_x):
-        k1 = f(list_x[i], 
-               list_y[i])
-        k2 = f(list_x[i] + h/2, 
-               list_y[i] + (h/2) * k1)
-        k3 = f(list_x[i] + h/2, 
-               list_y[i] + (h/2) * k2)
-        k4 = f(list_x[i] + h, 
-               list_y[i] + h * k3)
-
-        list_y[i+1] = list_y[i] + h * (k1 + 2*k2 + 2*k3 + k4) / 6
-
+    
+    for i in range(n_h):
+        list_y[i+1] = list_y[i] + h * f(list_x[i], list_y[i])
+    
     return list(list_x), list(list_y)
 
 def run():
@@ -56,8 +47,8 @@ def run():
     expr, x0, y0, h, n_h = read_file(FILE_NAME)
     
     if expr is not None:
-        list_x, list_y = runge_kutta_o4(expr, x0, y0, h, n_h)
-        output = 'runge_kutta_o4:\n'
+        list_x, list_y = euler_method(expr, x0, y0, h, n_h)
+        output = 'euler_method:\n'
         
         for i in range(len(list_x)):
             output += f"x = {list_x[i]}, y = {list_y[i]}\n"
