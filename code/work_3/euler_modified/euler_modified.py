@@ -1,10 +1,10 @@
 import os
 import numpy as np
 import sympy as sp
-import matplotlib.pyplot as plt
+
 
 # Funções para entrada e saída de dados
-def read_file(file_name: str):
+def __read_file(file_name: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
@@ -18,20 +18,12 @@ def read_file(file_name: str):
 
     return expr, x0, y0, h, n_h
             
-def save_results(file_name: str, result: str):
+def __save_results(file_name: str, result: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'w') as f:
         f.write(result)
-
-def show_plot(result_x, result_y):
-    plt.plot(result_x, result_y, label='Euler Modified')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Resultado do Método de Euler')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
   
+
 def euler_modified(expr, x0, y0, h, n_h):
     list_x = np.linspace(x0, x0 + n_h * h, n_h + 1)
     list_y = np.zeros(n_h + 1)
@@ -57,7 +49,7 @@ def euler_modified(expr, x0, y0, h, n_h):
 
 def run():
     FILE_NAME = 'input.txt'
-    expr, x0, y0, h, n_h = read_file(FILE_NAME)
+    expr, x0, y0, h, n_h = __read_file(FILE_NAME)
     
     if expr is not None:
         list_x, list_y = euler_modified(expr, x0, y0, h, n_h)
@@ -66,9 +58,8 @@ def run():
         for i in range(len(list_x)):
             output += f"x = {list_x[i]}, y = {list_y[i]}\n"
         
-        save_results('output.txt', output)
-        
-    show_plot(list_x, list_y)
+        __save_results('output.txt', output)
+        return list_x, list_y
 
 # Chama a função principal
 if __name__ == '__main__':
