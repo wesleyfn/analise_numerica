@@ -7,7 +7,7 @@ def read_file(file_name: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
-            expr = sp.parse_expr(f.readline())
+            expr = sp.sympify(f.readline())
             a = float(f.readline())
             b = float(f.readline())
             
@@ -22,15 +22,15 @@ def save_results(file_name: str, result: str):
         f.write(result)
 
 
-def simpson_integration1_3(expr, a, b):
+def simpson_integration3_8(expr, a, b):
     # Define a função f que retornará o resultado de f(value)
     f = lambda x: sp.N(expr.subs({'x': x})) if hasattr(expr, 'subs') else expr
 
     h = (b - a)  # Tamanho do subintervalo
-    list_x = np.linspace(a, b, 3)
+    list_x = np.linspace(a, b, 4)
     
     # Calcula a soma dos trapézios
-    aprox_integral = (f(a) + 4*f(list_x[1]) + f(b)) / 6
+    aprox_integral = (f(a) + 3*f(list_x[1]) + 3*f(list_x[2]) + f(b)) / 8
     # Multiplica pela largura do subintervalo
     aprox_integral *= h  
 
@@ -41,12 +41,12 @@ def simpson_integration1_3(expr, a, b):
 
 
 def run():
-    FILE_NAME = '1_3_input.txt'
+    FILE_NAME = '3_8_input.txt'
     expr, a, b = read_file(FILE_NAME)
     
     if expr is not None:
-        integral = simpson_integration1_3(expr, a, b)
-        save_results('output.txt', f'simpson_integration1_3: {integral}')
+        integral = simpson_integration3_8(expr, a, b)
+        save_results('output.txt', f'simpson_integration3_8: {integral}')
 
 # Chama a função principal
 if __name__ == '__main__':

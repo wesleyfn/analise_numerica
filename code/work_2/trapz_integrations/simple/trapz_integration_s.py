@@ -6,7 +6,7 @@ def read_file(file_name: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
-            expr = sp.parse_expr(f.readline())
+            expr = sp.sympify(f.readline())
             a = float(f.readline())
             b = float(f.readline())
             
@@ -38,12 +38,10 @@ def trapz_integration_s(expr, a, b):
     exact_integral = sp.integrate(expr, ('x', a, b))
     
     # Calcula o erro teórico
-    diff_2o = numerical_diff_2o(expr, sp.symbols('x'), 1e-4)
-    error_t = -(h**3) * (sp.integrate(diff_2o, ('x', a, b)) / h)/12
     error_percentual = ((exact_integral - aprox_integral) / exact_integral) * 100 
     
     # Retorna o resultado da integral aproximada e o erro teórico
-    return aprox_integral, error_t, round(error_percentual, 2)
+    return aprox_integral, round(error_percentual, 2)
 
 
 def run():

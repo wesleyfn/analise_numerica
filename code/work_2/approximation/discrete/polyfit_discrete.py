@@ -10,20 +10,20 @@ def read_file(file_name: str):
             n = int(f.readline().strip())
             x_values, y_values = [], []
             for line in f.readlines():
-                x_values += line.strip().split(',')[:1]
-                y_values += line.strip().split(',')[1:]
+                x_values += line.strip().split(';')[:1]
+                y_values += line.strip().split(';')[1:]
                 
-            x_values = list(map(lambda x: np.float64(eval(x)), x_values))
-            y_values = list(map(lambda x: np.float64(eval(x)), y_values))
+            x_values = list(map(lambda x: sp.sympify(x), x_values))
+            y_values = list(map(lambda x: sp.sympify(x), y_values))
             
         except (ValueError, TypeError):
             return None, None, 0
 
     return x_values, y_values, n
             
+def save_results(file_name: str, result: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'w') as f:
-        f.truncate(0)
         f.write(result)
 
 # Funções auxiliares para a aproximação
@@ -95,10 +95,10 @@ def polyfit_discrete(list_x, list_y, degree):
     r2 = 1 - (s_res / s_tot)
     
     # Calcula o desvio padrão (se houver mais de 2 pontos)
-    std_dev = np.sqrt(s_res / (n - degree - 1)) if n-degree-1 > 0 else 0
+    std_dev = sp.sqrt(s_res / (n-degree-1)) if n-degree-1 > 0 else 0
     
     # Calcula o erro padrão da estimativa (se houver mais de 2 pontos)
-    std_err = np.sqrt(s_res / (n - degree - 2)) if n-degree-2 > 0 else 0
+    std_err = sp.sqrt(s_res / (n-degree-2)) if n-degree-2 > 0 else 0
     
     # Cria um polinomio utilizando os coeficientes gerados anteriormente
     poly = sp.N(sp.Poly.from_list(coeffs, sp.symbols('x')).as_expr(), 7)

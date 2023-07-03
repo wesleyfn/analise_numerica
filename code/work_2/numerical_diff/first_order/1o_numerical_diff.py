@@ -6,13 +6,9 @@ def read_file(file_name: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
-            # Lê a primeira linha do arquivo e converte para expressão sympy
-            expr = sp.parse_expr(f.readline())
-            # Lê a segunda linha do arquivo e converte para float
-            x = float(f.readline())
-            # Lê a terceira linha do arquivo e converte para float
-            h = float(f.readline())
-            # Lê a quarta linha do arquivo
+            expr = sp.sympify(f.readline())
+            x = sp.sympify(f.readline())
+            h = sp.sympify(f.readline())
             method = f.readline().strip()
             
         except (ValueError, TypeError):

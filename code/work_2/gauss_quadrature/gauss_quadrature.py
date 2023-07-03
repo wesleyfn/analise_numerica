@@ -7,7 +7,7 @@ def read_file(file_name: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
-            expr = sp.parse_expr(f.readline())
+            expr = sp.sympify(f.readline())
             a = float(f.readline())
             b = float(f.readline())
             n = int(f.readline())
@@ -38,9 +38,9 @@ def gauss_quadrature(expr, a, b, n):
     aprox_integral = sum(list_c[i]*f(new_expr, list_x[i]) for i in range(n))
     exact_integral = sp.integrate(expr, ('x', a, b))
     
-    error_t = ((exact_integral - aprox_integral) / exact_integral) * 100
+    error_perc = ((exact_integral - aprox_integral) / exact_integral) * 100
     
-    return aprox_integral, round(error_t, 2) 
+    return aprox_integral, round(error_perc, 2) 
 
 
 def run():

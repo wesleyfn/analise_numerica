@@ -7,7 +7,7 @@ def read_file(file_name: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
     with open(path_file, 'r') as f:
         try:
-            expr = sp.parse_expr(f.readline())
+            expr = sp.sympify(f.readline())
             a = float(f.readline())
             b = float(f.readline())
             n_seg = int(f.readline())

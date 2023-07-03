@@ -9,11 +9,11 @@ def read_file(file_name: str):
         try:
             list_x, list_y = [], []
             for line in f.readlines():
-                list_x += line.strip().split(',')[:1]
-                list_y += line.strip().split(',')[1:]
+                list_x += line.strip().split(';')[:1]
+                list_y += line.strip().split(';')[1:]
                 
-            list_x = list(map(lambda x: float(sp.parse_expr(x)), list_x))
-            list_y = list(map(lambda x: float(sp.parse_expr(x)), list_y))
+            list_x = list(map(lambda x: sp.sympify(x), list_x))
+            list_y = list(map(lambda x: sp.sympify(x), list_y))
             
         except (ValueError, TypeError):
             return None, None

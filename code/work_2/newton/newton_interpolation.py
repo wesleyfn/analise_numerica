@@ -4,10 +4,10 @@ import sympy as sp
 
 """
     inter_input (pontos):
-        1, ln(1)
-        4, ln(4)
-        6, ln(6)
-        5, ln(5)
+        1; ln(1)
+        4; ln(4)
+        6; ln(6)
+        5; ln(5)
 """
 
 # Funções para entrada e saída de dados
@@ -17,11 +17,11 @@ def read_file(file_name: str):
         try:
             list_x, list_y = [], []
             for line in f.readlines():
-                list_x += line.strip().split(',')[:1]
-                list_y += line.strip().split(',')[1:]
+                list_x += line.strip().split(';')[:1]
+                list_y += line.strip().split(';')[1:]
                 
-            list_x = list(map(lambda x: float(sp.parse_expr(x)), list_x))
-            list_y = list(map(lambda x: float(sp.parse_expr(x)), list_y))
+            list_x = list(map(lambda x: sp.sympify(x), list_x))
+            list_y = list(map(lambda x: sp.sympify(x), list_y))
             
         except (ValueError, TypeError):
             return None, None

@@ -1,7 +1,16 @@
 import os
 import numpy as np
 import sympy as sp
+import math
 
+""" 
+    Entrada do arquivo:
+    # expr - expressão algébrica
+    # x0 - x inicial
+    # xf - x final
+    # y0 - y inicial
+    # h - tamanho do passo
+"""
 
 # Funções para entrada e saída de dados
 def __read_file(file_name: str):
@@ -10,13 +19,13 @@ def __read_file(file_name: str):
         try:
             expr = sp.sympify(f.readline())
             x0 = float(f.readline())
+            xf = float(f.readline())
             y0 = float(f.readline())
             h = float(f.readline())
-            n_h = int(f.readline())
         except (ValueError, TypeError):
             return None, 0.0, 0.0, 0.0, 0
 
-    return expr, x0, y0, h, n_h
+    return expr, x0, xf, y0, h
             
 def __save_results(file_name: str, result: str):
     path_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
@@ -24,21 +33,21 @@ def __save_results(file_name: str, result: str):
         f.write(result)
   
 
-def euler_modified(expr, x0, y0, h, n_h):
-    list_x = np.linspace(x0, x0 + n_h * h, n_h + 1)
-    list_y = np.zeros(n_h + 1)
+def euler_modified(expr, x0, xf, y0, h):
+    list_x = np.arange(x0, xf + h, h)
+    n_x = len(list_x)
+    list_y = np.zeros(n_x)
     list_y[0] = y0
     
-    symbols = list(expr.free_symbols)
-    symbols.append(sp.Symbol('y'))
-    
+    symbols = list(sp.ordered(expr.free_symbols))
+    symbols.append('y')
     def f(x, y):
         if isinstance(expr, sp.Expr):
             return sp.N(expr.subs([(symbols[0], x), (symbols[1], y)]))
         else:
             return expr
     
-    for i in range(n_h):
+    for i in range(n_x-1):
         k1 = f(list_x[i], 
                list_y[i])
         k2 = f(list_x[i] + h/2, 
@@ -49,10 +58,10 @@ def euler_modified(expr, x0, y0, h, n_h):
 
 def run():
     FILE_NAME = 'input.txt'
-    expr, x0, y0, h, n_h = __read_file(FILE_NAME)
+    expr, x0, xf, y0, h = __read_file(FILE_NAME)
     
     if expr is not None:
-        list_x, list_y = euler_modified(expr, x0, y0, h, n_h)
+        list_x, list_y = euler_modified(expr, x0, xf, y0, h)
         output = 'euler_modified:\n'
         
         for i in range(len(list_x)):
