@@ -13,8 +13,8 @@ def read_file(file_name: str):
                 x_values += line.strip().split(';')[:1]
                 y_values += line.strip().split(';')[1:]
                 
-            x_values = list(map(lambda x: sp.sympify(x), x_values))
-            y_values = list(map(lambda x: sp.sympify(x), y_values))
+            x_values = list(map(lambda x: sp.N(sp.sympify(x)), x_values))
+            y_values = list(map(lambda x: sp.N(sp.sympify(x)), y_values))
             
         except (ValueError, TypeError):
             return None, None, 0

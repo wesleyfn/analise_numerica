@@ -20,8 +20,8 @@ def read_file(file_name: str):
                 list_x += line.strip().split(';')[:1]
                 list_y += line.strip().split(';')[1:]
                 
-            list_x = list(map(lambda x: sp.sympify(x), list_x))
-            list_y = list(map(lambda x: sp.sympify(x), list_y))
+            list_x = list(map(lambda x: sp.N(sp.sympify(x)), list_x))
+            list_y = list(map(lambda x: sp.N(sp.sympify(x)), list_y))
             
         except (ValueError, TypeError):
             return None, None

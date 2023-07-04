@@ -12,8 +12,8 @@ def read_file(file_name: str):
                 list_x += line.strip().split(';')[:1]
                 list_y += line.strip().split(';')[1:]
                 
-            list_x = list(map(lambda x: sp.sympify(x), list_x))
-            list_y = list(map(lambda x: sp.sympify(x), list_y))
+            list_x = list(map(lambda x: sp.N(sp.sympify(x)), list_x))
+            list_y = list(map(lambda x: sp.N(sp.sympify(x)), list_y))
             
         except (ValueError, TypeError):
             return None, None
@@ -45,9 +45,9 @@ def linear_regression(list_x, list_y):
     s_res = np.sum((list_y - (a0 + a1*list_x)) ** 2)
 
     # Cálculo do desvio padrão
-    std_dev = np.sqrt(s_tot / (n - 1))
+    std_dev = (s_tot / (n - 1))**(1/2)
     # Cálculo do erro padrão da estimativa
-    std_err = np.sqrt(s_res / (n - 2))
+    std_err = (s_res / (n - 2))**(1/2)
     # Cálculo do coeficiente de determinação
     r2 = 1 - (s_res / s_tot)
     

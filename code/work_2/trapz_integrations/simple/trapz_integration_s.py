@@ -20,13 +20,6 @@ def save_results(file_name: str, result: str):
     with open(path_file, 'w') as f:
         f.write(result)
 
-# Função auxiliar para a aproximação
-def numerical_diff_2o(expr, x, h):
-    f = lambda x: sp.N(expr.subs({'x': x})) if hasattr(expr, 'subs') else expr
-    
-    # Retorna a aproximação da derivada numérica de segunda ordem
-    return sp.N(((f(x + h) - f(x))/h - (f(x) - f(x - h))/h) / h)
-
 
 def trapz_integration_s(expr, a, b):
     f = lambda x: sp.N(expr.subs({'x': x})) if hasattr(expr, 'subs') else expr
